@@ -1,0 +1,13 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\Controllers\CmsDeployController.cs(40,26): error CS1061: "CaborcaContext" no contiene una definición para "BitacoraDespliegues" ni un método de extensión accesible "BitacoraDespliegues" que acepte un primer argumento del tipo "CaborcaContext" (¿falta alguna directiva using o una referencia de ensamblado?) [C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\CMS_Caborca_API.csproj]
+C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\Controllers\CmsDeployController.cs(40,61): error CS0234: El tipo o el nombre del espacio de nombres 'BitacoraDespliegue' no existe en el espacio de nombres 'CMS_Caborca_API.Models' (¿falta alguna referencia de ensamblado?) [C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\CMS_Caborca_API.csproj]
+
+ERROR al compilar.
+
+C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\Controllers\CmsDeployController.cs(40,26): error CS1061: "CaborcaContext" no contiene una definición para "BitacoraDespliegues" ni un método de extensión accesible "BitacoraDespliegues" que acepte un primer argumento del tipo "CaborcaContext" (¿falta alguna directiva using o una referencia de ensamblado?) [C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\CMS_Caborca_API.csproj]
+C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\Controllers\CmsDeployController.cs(40,61): error CS0234: El tipo o el nombre del espacio de nombres 'BitacoraDespliegue' no existe en el espacio de nombres 'CMS_Caborca_API.Models' (¿falta alguna referencia de ensamblado?) [C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\CMS_Caborca_API.csproj]
+    0 Advertencia(s)
+    2 Errores
+
+Tiempo transcurrido 00:00:01.90
