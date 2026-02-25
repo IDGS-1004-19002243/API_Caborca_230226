@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace CMS_Caborca_API.Controllers
 {
@@ -83,6 +84,59 @@ namespace CMS_Caborca_API.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(new { message = $"Textos de '{pagina}' guardados exitosamente como Borrador." });
+        }
+
+        [HttpGet("clean-base64")]
+        public async Task<ActionResult> CleanBase64()
+        {
+            var contenidos = await _context.Contenidos_Paginas.ToListAsync();
+            int count = 0;
+            string regexPattern = @"data:image\/[^;]+;base64,[a-zA-Z0-9\+/=]+";
+            string defaultImage = "https://blocks.astratic.com/img/general-img-landscape.png";
+
+            foreach (var item in contenidos)
+            {
+                bool modified = false;
+
+                if (!string.IsNullOrEmpty(item.Contenido_Borrador_Stage) && Regex.IsMatch(item.Contenido_Borrador_Stage, regexPattern, RegexOptions.IgnoreCase))
+                {
+                    item.Contenido_Borrador_Stage = Regex.Replace(item.Contenido_Borrador_Stage, regexPattern, defaultImage, RegexOptions.IgnoreCase);
+                    modified = true;
+                }
+
+                if (!string.IsNullOrEmpty(item.Contenido_Publicado_Produccion) && Regex.IsMatch(item.Contenido_Publicado_Produccion, regexPattern, RegexOptions.IgnoreCase))
+                {
+                    item.Contenido_Publicado_Produccion = Regex.Replace(item.Contenido_Publicado_Produccion, regexPattern, defaultImage, RegexOptions.IgnoreCase);
+                    modified = true;
+                }
+
+                if (modified) count++;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"Se limpiaron {count} registros con base64." });
+        }
+
+        // POST: api/cms/deploy
+        // Mueve todo el contenido de Borrador a Producción
+        [HttpPost("/api/cms/deploy")]
+        [Authorize]
+        public async Task<ActionResult> DeployContent()
+        {
+            var contenidos = await _context.Contenidos_Paginas.ToListAsync();
+            int count = 0;
+
+            foreach (var item in contenidos)
+            {
+                if (!string.IsNullOrEmpty(item.Contenido_Borrador_Stage))
+                {
+                    item.Contenido_Publicado_Produccion = item.Contenido_Borrador_Stage;
+                    count++;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"Se publicaron {count} bloques de contenido exitosamente." });
         }
     }
 }

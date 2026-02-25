@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace CMS_Caborca_API.Controllers
 {
@@ -8,11 +10,22 @@ namespace CMS_Caborca_API.Controllers
     [Authorize] // Solo admin puede subir fotos
     public class UploadController : ControllerBase
     {
-        private readonly IWebHostEnvironment _environment;
+        private readonly Cloudinary _cloudinary;
 
-        public UploadController(IWebHostEnvironment environment)
+        public UploadController(IConfiguration configuration)
         {
-            _environment = environment;
+            try {
+                var cloudinaryConfig = configuration.GetSection("Cloudinary");
+                var account = new Account(
+                    cloudinaryConfig["CloudName"] ?? "missing",
+                    cloudinaryConfig["ApiKey"] ?? "missing",
+                    cloudinaryConfig["ApiSecret"] ?? "missing"
+                );
+                _cloudinary = new Cloudinary(account);
+                _cloudinary.Api.Secure = true;
+            } catch (Exception ex) {
+                Console.WriteLine($"Error init Cloudinary: {ex.Message}");
+            }
         }
 
         [HttpPost]
@@ -21,30 +34,22 @@ namespace CMS_Caborca_API.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No se ha seleccionado ningún archivo.");
 
-            // 1. Crear carpeta uploads si no existe
-            // Asegurarse de que WebRootPath no sea nulo (puede serlo si no hay carpeta wwwroot creada aun)
-            string webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            
-            string uploadsFolder = Path.Combine(webRootPath, "uploads");
-            if (!Directory.Exists(uploadsFolder))
+            using var stream = file.OpenReadStream();
+            var uploadParams = new ImageUploadParams()
             {
-                Directory.CreateDirectory(uploadsFolder);
+                File = new FileDescription(file.FileName, stream),
+                Folder = "cms_caborca" // Carpeta opcional en tu cuenta de Cloudinary
+            };
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.Error != null)
+            {
+                return StatusCode(500, $"Error subiendo imagen a Cloudinary: {uploadResult.Error.Message}");
             }
 
-            // 2. Generar nombre único para evitar sobrescribir
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            // 3. Guardar en disco
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
-
-            // 4. Devolver URL relativa
-            // Nota: En producción, esto podría ser una URL completa si usas CDN, pero para local está bien.
-            string relativeUrl = $"https://{Request.Host}/uploads/{uniqueFileName}"; 
-            return Ok(new { url = relativeUrl });
+            // Devolver URL segura (HTTPS) de Cloudinary
+            return Ok(new { url = uploadResult.SecureUrl.ToString() });
         }
     }
 }

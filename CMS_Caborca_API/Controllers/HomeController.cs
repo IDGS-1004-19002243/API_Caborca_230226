@@ -24,6 +24,8 @@ namespace CMS_Caborca_API.Controllers
         private const string KEY_SUSTENTABILIDAD = "home_sustentabilidad";
         private const string KEY_ARTE_CREACION = "home_arte_creacion";
         private const string KEY_DIST_LOGOS = "home_distribuidores_logos";
+        private const string KEY_DONDE_COMPRAR = "home_donde_comprar";
+        private const string KEY_PROD_DEST = "home_productos_destacados";
 
         public HomeController(CaborcaContext context)
         {
@@ -40,7 +42,7 @@ namespace CMS_Caborca_API.Controllers
             // Si el header tiene token (CMS Admin), IsAuthenticated es true
             bool isCMS = User.Identity?.IsAuthenticated == true;
 
-            var keys = new[] { KEY_CAROUSEL, KEY_FORM_DIST, KEY_SUSTENTABILIDAD, KEY_ARTE_CREACION, KEY_DIST_LOGOS,
+            var keys = new[] { KEY_CAROUSEL, KEY_FORM_DIST, KEY_SUSTENTABILIDAD, KEY_ARTE_CREACION, KEY_DIST_LOGOS, KEY_DONDE_COMPRAR, KEY_PROD_DEST,
                                 // Compatibilidad con clave antigua "home_distribuidores"
                                 "home_distribuidores" };
             var records = await _context.Contenidos_Paginas
@@ -83,6 +85,16 @@ namespace CMS_Caborca_API.Controllers
             if (!string.IsNullOrEmpty(jsonLogos))
                 response.DistribuidoresLogos = JsonSerializer.Deserialize<HomeDistribuidoresLogosDto>(jsonLogos, _jsonOptions) ?? new();
 
+            // 6. Dónde Comprar
+            var jsonDonde = GetJson(KEY_DONDE_COMPRAR);
+            if (!string.IsNullOrEmpty(jsonDonde))
+                response.DondeComprar = JsonSerializer.Deserialize<HomeDondeComprarDto>(jsonDonde, _jsonOptions) ?? new();
+
+            // 7. Productos Destacados
+            var jsonProd = GetJson(KEY_PROD_DEST);
+            if (!string.IsNullOrEmpty(jsonProd))
+                response.ProductosDestacados = JsonSerializer.Deserialize<HomeProductosDestacadosDto>(jsonProd, _jsonOptions) ?? new();
+
             return Ok(response);
         }
 
@@ -112,6 +124,14 @@ namespace CMS_Caborca_API.Controllers
             var recLogos = await GetOrCreateRecord("Inicio", "Logos Dist.", KEY_DIST_LOGOS);
             recLogos.Contenido_Borrador_Stage = JsonSerializer.Serialize(request.DistribuidoresLogos);
 
+            // 6. Dónde Comprar
+            var recDonde = await GetOrCreateRecord("Inicio", "Dónde Comprar", KEY_DONDE_COMPRAR);
+            recDonde.Contenido_Borrador_Stage = JsonSerializer.Serialize(request.DondeComprar);
+
+            // 7. Productos Destacados
+            var recProd = await GetOrCreateRecord("Inicio", "Productos Destacados", KEY_PROD_DEST);
+            recProd.Contenido_Borrador_Stage = JsonSerializer.Serialize(request.ProductosDestacados);
+
             await _context.SaveChangesAsync();
             return Ok(new { message = "Contenido guardado como BORRADOR. Usa 'Publicar' para verlo en el portafolio." });
         }
@@ -122,7 +142,7 @@ namespace CMS_Caborca_API.Controllers
         [Authorize]
         public async Task<ActionResult> DeployHomeContent()
         {
-            var keys = new[] { KEY_CAROUSEL, KEY_FORM_DIST, KEY_SUSTENTABILIDAD, KEY_ARTE_CREACION, KEY_DIST_LOGOS };
+            var keys = new[] { KEY_CAROUSEL, KEY_FORM_DIST, KEY_SUSTENTABILIDAD, KEY_ARTE_CREACION, KEY_DIST_LOGOS, KEY_DONDE_COMPRAR, KEY_PROD_DEST };
             var records = await _context.Contenidos_Paginas
                 .Where(c => keys.Contains(c.Clave_Identificadora))
                 .ToListAsync();

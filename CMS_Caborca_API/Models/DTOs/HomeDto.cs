@@ -16,6 +16,12 @@
 
         // Sección "Distribuidores Autorizados" (logos)
         public HomeDistribuidoresLogosDto DistribuidoresLogos { get; set; } = new();
+
+        // Sección "Dónde Comprar"
+        public HomeDondeComprarDto DondeComprar { get; set; } = new();
+
+        // Sección "Productos Destacados"
+        public HomeProductosDestacadosDto ProductosDestacados { get; set; } = new();
     }
 
     // ─── Carousel ───────────────────────────────────────────────────────────────
@@ -56,6 +62,8 @@
         public string NotaTiempo_EN { get; set; } = string.Empty;
         public string StatDistribuidores { get; set; } = string.Empty;
         public string StatEstados { get; set; } = string.Empty;
+        // Permite lista opcional de features
+        public List<HomeFeatureDto> Features { get; set; } = new();
     }
 
     // ─── Arte de la Creación ────────────────────────────────────────────────────
@@ -98,5 +106,26 @@
     {
         public int Id { get; set; }
         public string ImagenUrl { get; set; } = string.Empty;
+    }
+
+    // ─── Dónde Comprar ────────────────────────────────────────────────────────
+    public class HomeDondeComprarDto
+    {
+        public string Titulo_ES { get; set; } = string.Empty;
+        public string Titulo_EN { get; set; } = string.Empty;
+        public string Descripcion_ES { get; set; } = string.Empty;
+        public string Descripcion_EN { get; set; } = string.Empty;
+        public string TextoBoton_ES { get; set; } = string.Empty;
+        public string TextoBoton_EN { get; set; } = string.Empty;
+        public string MapaUrl { get; set; } = string.Empty;
+        public string Nota_ES { get; set; } = string.Empty;
+        public string Nota_EN { get; set; } = string.Empty;
+    }
+
+    // ─── Productos Destacados ────────────────────────────────────────────────
+    public class HomeProductosDestacadosDto
+    {
+        public string Titulo_ES { get; set; } = string.Empty;
+        public string Titulo_EN { get; set; } = string.Empty;
     }
 }
