@@ -116,67 +116,55 @@ namespace CMS_Caborca_API.Controllers
             return Ok(new { message = "Despliegue programado." });
         }
 
-        // --- Configuración General del CMS ---
-
-        // GET: api/Settings/ConfigList
-        // Obtiene todas las configuraciones guardadas con prefijo CMS_Config_
-        [HttpGet("ConfigList")]
-        [Authorize]
-        public async Task<ActionResult<Dictionary<string, object>>> GetConfigList()
+        // GET: api/Settings/ConfiguracionGeneral
+        [HttpGet("ConfiguracionGeneral")]
+        public async Task<ActionResult<object>> GetConfiguracionGeneral()
         {
-            var configItems = await _context.Configuraciones_Del_Sistema
-                .Where(c => c.Clave_Configuracion.StartsWith("CMS_Config_"))
-                .ToListAsync();
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Configuracion_General");
 
-            var result = new Dictionary<string, object>();
-
-            foreach (var item in configItems)
+            if (config != null && !string.IsNullOrEmpty(config.Valor_Configuracion))
             {
-                // Removemos el prefijo para mandar la clave original (ej: 'medioContacto')
-                string keyName = item.Clave_Configuracion.Substring("CMS_Config_".Length);
                 try
                 {
-                    result[keyName] = JsonSerializer.Deserialize<object>(item.Valor_Configuracion) ?? new object();
+                    var data = JsonSerializer.Deserialize<object>(config.Valor_Configuracion);
+                    return Ok(data);
                 }
                 catch
                 {
-                    result[keyName] = item.Valor_Configuracion;
+                    return Ok(new { });
                 }
             }
 
-            return Ok(result);
+            return Ok(new { });
         }
 
-        // POST: api/Settings/ConfigList
-        // Guarda un lote de configuraciones
-        [HttpPost("ConfigList")]
+        // PUT: api/Settings/ConfiguracionGeneral
+        [HttpPut("ConfiguracionGeneral")]
         [Authorize]
-        public async Task<ActionResult> SaveConfigList([FromBody] Dictionary<string, JsonElement> configs)
+        public async Task<ActionResult> UpdateConfiguracionGeneral([FromBody] object data)
         {
-            foreach (var kvp in configs)
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Configuracion_General");
+
+            string json = JsonSerializer.Serialize(data);
+
+            if (config == null)
             {
-                string dbKey = "CMS_Config_" + kvp.Key;
-                string jsonValue = kvp.Value.GetRawText();
-
-                var record = await _context.Configuraciones_Del_Sistema
-                    .FirstOrDefaultAsync(c => c.Clave_Configuracion == dbKey);
-
-                if (record == null)
+                config = new Configuracion_Del_Sistema
                 {
-                    _context.Configuraciones_Del_Sistema.Add(new Configuracion_Del_Sistema
-                    {
-                        Clave_Configuracion = dbKey,
-                        Valor_Configuracion = jsonValue
-                    });
-                }
-                else
-                {
-                    record.Valor_Configuracion = jsonValue;
-                }
+                    Clave_Configuracion = "Configuracion_General",
+                    Valor_Configuracion = json
+                };
+                _context.Configuraciones_Del_Sistema.Add(config);
+            }
+            else
+            {
+                config.Valor_Configuracion = json;
             }
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Configuraciones guardadas exitosamente en la base de datos." });
+            return Ok(new { message = "Configuración general guardada exitosamente." });
         }
     }
 }
