@@ -115,5 +115,68 @@ namespace CMS_Caborca_API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Despliegue programado." });
         }
+
+        // --- Configuración General del CMS ---
+
+        // GET: api/Settings/ConfigList
+        // Obtiene todas las configuraciones guardadas con prefijo CMS_Config_
+        [HttpGet("ConfigList")]
+        [Authorize]
+        public async Task<ActionResult<Dictionary<string, object>>> GetConfigList()
+        {
+            var configItems = await _context.Configuraciones_Del_Sistema
+                .Where(c => c.Clave_Configuracion.StartsWith("CMS_Config_"))
+                .ToListAsync();
+
+            var result = new Dictionary<string, object>();
+
+            foreach (var item in configItems)
+            {
+                // Removemos el prefijo para mandar la clave original (ej: 'medioContacto')
+                string keyName = item.Clave_Configuracion.Substring("CMS_Config_".Length);
+                try
+                {
+                    result[keyName] = JsonSerializer.Deserialize<object>(item.Valor_Configuracion) ?? new object();
+                }
+                catch
+                {
+                    result[keyName] = item.Valor_Configuracion;
+                }
+            }
+
+            return Ok(result);
+        }
+
+        // POST: api/Settings/ConfigList
+        // Guarda un lote de configuraciones
+        [HttpPost("ConfigList")]
+        [Authorize]
+        public async Task<ActionResult> SaveConfigList([FromBody] Dictionary<string, JsonElement> configs)
+        {
+            foreach (var kvp in configs)
+            {
+                string dbKey = "CMS_Config_" + kvp.Key;
+                string jsonValue = kvp.Value.GetRawText();
+
+                var record = await _context.Configuraciones_Del_Sistema
+                    .FirstOrDefaultAsync(c => c.Clave_Configuracion == dbKey);
+
+                if (record == null)
+                {
+                    _context.Configuraciones_Del_Sistema.Add(new Configuracion_Del_Sistema
+                    {
+                        Clave_Configuracion = dbKey,
+                        Valor_Configuracion = jsonValue
+                    });
+                }
+                else
+                {
+                    record.Valor_Configuracion = jsonValue;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Configuraciones guardadas exitosamente en la base de datos." });
+        }
     }
 }
