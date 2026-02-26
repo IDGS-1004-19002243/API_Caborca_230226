@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CaborcaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Agregar Controladores
+// 2. Agregar Controladores y Background Services
 builder.Services.AddControllers();
+builder.Services.AddHostedService<CMS_Caborca_API.Services.DeploymentSchedulerService>();
 
 // 3. Configurar CORS (Permitir que React se conecte)
 builder.Services.AddCors(options =>

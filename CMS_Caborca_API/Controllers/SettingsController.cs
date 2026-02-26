@@ -69,5 +69,51 @@ namespace CMS_Caborca_API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Configuración de mantenimiento guardada exitosamente." });
         }
+
+        // GET: api/Settings/DeploySchedule
+        [HttpGet("DeploySchedule")]
+        public async Task<ActionResult<object>> GetDeploySchedule()
+        {
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Deploy_Schedule");
+
+            if (config != null && !string.IsNullOrEmpty(config.Valor_Configuracion))
+            {
+                return Ok(new { date = config.Valor_Configuracion });
+            }
+
+            return Ok(new { date = (string?)null });
+        }
+
+        public class ScheduleDto
+        {
+            public string Date { get; set; } = null!;
+        }
+
+        // POST: api/Settings/DeploySchedule
+        [HttpPost("DeploySchedule")]
+        [Authorize]
+        public async Task<ActionResult> SetDeploySchedule([FromBody] ScheduleDto request)
+        {
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Deploy_Schedule");
+
+            if (config == null)
+            {
+                config = new Configuracion_Del_Sistema
+                {
+                    Clave_Configuracion = "Deploy_Schedule",
+                    Valor_Configuracion = request.Date
+                };
+                _context.Configuraciones_Del_Sistema.Add(config);
+            }
+            else
+            {
+                config.Valor_Configuracion = request.Date;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Despliegue programado." });
+        }
     }
 }
