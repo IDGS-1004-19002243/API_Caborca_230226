@@ -10,7 +10,7 @@ namespace CMS_Caborca_API.Controllers
     [Authorize] // Solo admin puede subir fotos
     public class UploadController : ControllerBase
     {
-        private readonly Cloudinary _cloudinary;
+        private readonly Cloudinary _cloudinary = null!;
 
         public UploadController(IConfiguration configuration)
         {
