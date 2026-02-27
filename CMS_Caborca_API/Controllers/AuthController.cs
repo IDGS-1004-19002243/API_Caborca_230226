@@ -35,16 +35,8 @@ namespace CMS_Caborca_API.Controllers
                 return Unauthorized("Usuario no existe.");
             }
 
-            // 2. Verificar Contraseña
-            // NOTA: Implementamos validación temporal para los usuarios semilla
-            // En producción aquí usaríamos: BCrypt.Verify(request.Password, user.PasswordHash)
-            bool passwordValido = false;
-
-            if (user.Usuario == "superadmin" && request.Password == "super123") passwordValido = true;
-            else if (user.Usuario == "admin" && request.Password == "admin123") passwordValido = true;
-            else if (user.PasswordHash == request.Password) passwordValido = true; // Para pruebas simples
-
-            if (!passwordValido)
+            // 2. Verificar Contraseña contra la base de datos
+            if (user.PasswordHash != request.Password)
             {
                 return Unauthorized("Contraseña incorrecta.");
             }
@@ -71,12 +63,8 @@ namespace CMS_Caborca_API.Controllers
 
             if (user == null) return NotFound("Usuario no encontrado.");
 
-            bool passwordValido = false;
-            if (user.Usuario == "superadmin" && request.CurrentPassword == "super123") passwordValido = true;
-            else if (user.Usuario == "admin" && request.CurrentPassword == "admin123") passwordValido = true;
-            else if (user.PasswordHash == request.CurrentPassword) passwordValido = true;
-
-            if (!passwordValido) return BadRequest("La contraseña actual es incorrecta.");
+            if (user.PasswordHash != request.CurrentPassword)
+                return BadRequest("La contraseña actual es incorrecta.");
 
             // Almacenar la nueva contraseña directamente (o usar BCrypt en un escenario real)
             user.PasswordHash = request.NewPassword;
