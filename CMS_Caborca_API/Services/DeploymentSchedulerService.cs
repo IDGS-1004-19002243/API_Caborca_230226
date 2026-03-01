@@ -64,8 +64,16 @@ namespace CMS_Caborca_API.Services
                     _logger.LogError(ex, "Error ejecutando DeploymentSchedulerService.");
                 }
 
-                // Espera 30 segundos antes del siguiente chequeo
-                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                try
+                {
+                    // Espera 30 segundos antes del siguiente chequeo
+                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Ignorar la excepción cuando se detiene la aplicación
+                    break;
+                }
             }
         }
     }

@@ -1,0 +1,67 @@
+Usando la configuraci├│n de inicio de C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API\Properties\launchSettings.json...
+Compilando...
+info: CMS_Caborca_API.Services.DeploymentSchedulerService[0]
+      Servicio de despliegue programado iniciado.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5029
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\ruben\Desktop\Proyecto CMS Caborca\Proyecto Caborca\CMS_Caborca_API\CMS_Caborca_API
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (33ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [c].[Clave_Configuracion], [c].[Valor_Configuracion]
+      FROM [Configuracion_Del_Sistema] AS [c]
+      WHERE [c].[Clave_Configuracion] = N'Deploy_Schedule'

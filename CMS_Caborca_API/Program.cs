@@ -13,6 +13,7 @@ builder.Services.AddDbContext<CaborcaContext>(options =>
 // 2. Agregar Controladores y Background Services
 builder.Services.AddControllers();
 builder.Services.AddHostedService<CMS_Caborca_API.Services.DeploymentSchedulerService>();
+builder.Services.AddScoped<CMS_Caborca_API.Services.IEmailService, CMS_Caborca_API.Services.EmailService>();
 
 // 3. Configurar CORS (Permitir que React se conecte)
 builder.Services.AddCors(options =>

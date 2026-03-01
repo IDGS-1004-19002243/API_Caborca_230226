@@ -166,5 +166,59 @@ namespace CMS_Caborca_API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Configuración general guardada exitosamente." });
         }
+
+        // GET: api/Settings/CatalogoHombre
+        [HttpGet("CatalogoHombre")]
+        public async Task<ActionResult<object>> GetCatalogoHombre()
+        {
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Catalogo_Hombre");
+
+            if (config != null && !string.IsNullOrEmpty(config.Valor_Configuracion))
+            {
+                try { return Ok(JsonSerializer.Deserialize<object>(config.Valor_Configuracion)); } catch { return Ok(new List<object>()); }
+            }
+            return Ok(new List<object>());
+        }
+
+        // PUT: api/Settings/CatalogoHombre
+        [HttpPut("CatalogoHombre")]
+        [Authorize]
+        public async Task<ActionResult> UpdateCatalogoHombre([FromBody] object data)
+        {
+            var config = await _context.Configuraciones_Del_Sistema.FirstOrDefaultAsync(c => c.Clave_Configuracion == "Catalogo_Hombre");
+            string json = JsonSerializer.Serialize(data);
+            if (config == null) _context.Configuraciones_Del_Sistema.Add(new Configuracion_Del_Sistema { Clave_Configuracion = "Catalogo_Hombre", Valor_Configuracion = json });
+            else config.Valor_Configuracion = json;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Catálogo Hombre guardado exitosamente." });
+        }
+
+        // GET: api/Settings/CatalogoMujer
+        [HttpGet("CatalogoMujer")]
+        public async Task<ActionResult<object>> GetCatalogoMujer()
+        {
+            var config = await _context.Configuraciones_Del_Sistema
+                .FirstOrDefaultAsync(c => c.Clave_Configuracion == "Catalogo_Mujer");
+
+            if (config != null && !string.IsNullOrEmpty(config.Valor_Configuracion))
+            {
+                try { return Ok(JsonSerializer.Deserialize<object>(config.Valor_Configuracion)); } catch { return Ok(new List<object>()); }
+            }
+            return Ok(new List<object>());
+        }
+
+        // PUT: api/Settings/CatalogoMujer
+        [HttpPut("CatalogoMujer")]
+        [Authorize]
+        public async Task<ActionResult> UpdateCatalogoMujer([FromBody] object data)
+        {
+            var config = await _context.Configuraciones_Del_Sistema.FirstOrDefaultAsync(c => c.Clave_Configuracion == "Catalogo_Mujer");
+            string json = JsonSerializer.Serialize(data);
+            if (config == null) _context.Configuraciones_Del_Sistema.Add(new Configuracion_Del_Sistema { Clave_Configuracion = "Catalogo_Mujer", Valor_Configuracion = json });
+            else config.Valor_Configuracion = json;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Catálogo Mujer guardado exitosamente." });
+        }
     }
 }
