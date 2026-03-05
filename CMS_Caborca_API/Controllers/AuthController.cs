@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
+using CMS_Caborca_API.Services;
 
 namespace CMS_Caborca_API.Controllers
 {
@@ -16,11 +18,13 @@ namespace CMS_Caborca_API.Controllers
     {
         private readonly CaborcaContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public AuthController(CaborcaContext context, IConfiguration configuration)
+        public AuthController(CaborcaContext context, IConfiguration configuration, IEmailService emailService)
         {
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -51,6 +55,26 @@ namespace CMS_Caborca_API.Controllers
             return Ok(new { token = token, rol = user.Rol });
         }
 
+        [HttpGet("users")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<ActionResult> GetUsers()
+        {
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username)) return Unauthorized();
+
+            var user = await _context.Usuarios_Administradores.FirstOrDefaultAsync(u => u.Usuario == username);
+            if (user == null) return NotFound("Usuario no encontrado.");
+
+            bool isSuperAdmin = user.Rol == "SuperAdmin" || user.Usuario.ToLower() == "superadmin";
+            if (!isSuperAdmin) return StatusCode(403, "No autorizado.");
+
+            var users = await _context.Usuarios_Administradores
+                .Select(u => new { u.Usuario, u.Rol })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
         [HttpPost("change-password")]
         [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
@@ -58,16 +82,30 @@ namespace CMS_Caborca_API.Controllers
             var username = User.Identity?.Name;
             if (string.IsNullOrEmpty(username)) return Unauthorized();
 
-            var user = await _context.Usuarios_Administradores
+            var adminUser = await _context.Usuarios_Administradores
                 .FirstOrDefaultAsync(u => u.Usuario == username);
 
-            if (user == null) return NotFound("Usuario no encontrado.");
+            if (adminUser == null) return NotFound("Usuario no encontrado.");
 
-            if (user.PasswordHash != request.CurrentPassword)
+            bool isSuperAdmin = adminUser.Rol == "SuperAdmin" || adminUser.Usuario.ToLower() == "superadmin";
+            if (!isSuperAdmin)
+            {
+                return StatusCode(403, "Solo el SuperAdmin puede cambiar la contraseña.");
+            }
+
+            if (adminUser.PasswordHash != request.CurrentPassword)
                 return BadRequest("La contraseña actual es incorrecta.");
 
+            var targetUser = adminUser;
+            if (!string.IsNullOrEmpty(request.TargetUsername))
+            {
+                targetUser = await _context.Usuarios_Administradores
+                    .FirstOrDefaultAsync(u => u.Usuario == request.TargetUsername);
+                if (targetUser == null) return NotFound("El usuario destino no existe.");
+            }
+
             // Almacenar la nueva contraseña directamente (o usar BCrypt en un escenario real)
-            user.PasswordHash = request.NewPassword;
+            targetUser.PasswordHash = request.NewPassword;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Contraseña actualizada exitosamente." });
