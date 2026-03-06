@@ -37,6 +37,8 @@
         public string LinkBoton { get; set; } = string.Empty;
         public string ImagenUrl { get; set; } = string.Empty;
         public int Orden { get; set; }
+        public bool MostrarTitulo { get; set; } = true;
+        public bool MostrarSubtitulo { get; set; } = true;
     }
 
     // ─── Sección genérica ampliada ───────────────────────────────────────────────
